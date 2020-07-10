@@ -22,7 +22,7 @@ def after_request(response):
 
 @app.route('/')
 def index():
-    return render_template("index.html")
+    return render_template("layout.html")
 
 @app.route('/user_login')
 def user_login():
