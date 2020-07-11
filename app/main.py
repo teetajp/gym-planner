@@ -1,7 +1,8 @@
 import os
-import psycopg2
 from flask import Flask, flash, jsonify, redirect, render_template, request, session, url_for, send_from_directory
 from flask_session import Session
+from sqlalchemy import create_engine
+from sqlalchemy.orm import scoped_session, sessionmaker
 from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -17,9 +18,10 @@ app.config["TEMPLATES_AUTO_RELOAD"] = True
 if not os.environ.get("DATABASE_URL"):
     raise RuntimeError("DATABASE_URL not set")
 
-# Connect to PostgreSQL
-DATABASE_URL = os.environ['DATABASE_URL']
-conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+
+# Connect to PostgreSQL database
+engine = create_engine(os.getenv("DATABASE_URL"))
+db = scoped_session(sessionmaker(bind=engine))
 
 # Ensure responses aren't cached
 @app.after_request
