@@ -13,6 +13,11 @@ app = Flask(__name__)
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 
+# Make sure DATABASE_URL key is set
+if not os.environ.get("DATABASE_URL"):
+    raise RuntimeError("DATABASE_URL not set")
+
+# Connect to PostgreSQL
 DATABASE_URL = os.environ['DATABASE_URL']
 conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 
