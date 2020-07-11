@@ -4,3 +4,4 @@ __pycache__/
 runserver.ps1
 cs50template/
 dbkey.txt
+.env
