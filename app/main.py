@@ -74,7 +74,8 @@ def errorhandler(e):
     """Handle error"""
     if not isinstance(e, HTTPException):
         e = InternalServerError()
-    return apology(e.name, e.code)
+    # return apology(e.name, e.code)
+    return "<h1>Sorry,<br>Error " + str(e.code) + ": " + e.name + "</h1>"
 
 
 # Listen for errors
