@@ -33,15 +33,11 @@ Session(app)
 def index():
     return render_template("layout.html")
 
-@app.route('/user_login')
+@app.route('/login')
 def user_login():
-    """Log user in"""
+    """Log user and/or coach in"""
     return render_template("layout.html")
 
-@app.route('/coach_login')
-def coach_login():
-    """Log coach in"""
-    return 'TODO'
 
 @app.route("/logout")
 def logout():
