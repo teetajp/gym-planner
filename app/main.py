@@ -1,6 +1,6 @@
 import os
+import psycopg2
 from flask import Flask, flash, jsonify, redirect, render_template, request, session, url_for, send_from_directory
-
 from flask_session import Session
 from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
@@ -13,6 +13,8 @@ app = Flask(__name__)
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 
+DATABASE_URL = os.environ['DATABASE_URL']
+conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 
 # Ensure responses aren't cached
 @app.after_request
