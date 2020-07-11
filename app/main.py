@@ -53,7 +53,7 @@ def logout():
 def register():
     """Allow coaches and users to register an account"""
     
-    return "TODO"
+    return render_template("register.html")
 
 @app.route("/change_pw", methods=["GET", "POST"])
 @login_required
@@ -71,7 +71,7 @@ def errorhandler(e):
     if not isinstance(e, HTTPException):
         e = InternalServerError()
     # return apology(e.name, e.code)
-    return "<h1>Sorry,<br>Error " + str(e.code) + ": " + e.name + "</h1>"
+    return apology(e.name, e.code)
 
 
 # Listen for errors
