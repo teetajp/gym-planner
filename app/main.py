@@ -34,9 +34,9 @@ def index():
     return render_template("layout.html")
 
 @app.route('/login')
-def user_login():
+def login():
     """Log user and/or coach in"""
-    return render_template("layout.html")
+    return render_template("login.html")
 
 
 @app.route("/logout")
