@@ -24,10 +24,11 @@ app = Flask(__name__)
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 
-# Make sure DATABASE_URL key is set
-if not os.environ.get("DATABASE_URL"):
-    raise RuntimeError("DATABASE_URL not set")
+# # Make sure DATABASE_URL key is set
+# if not os.environ.get("DATABASE_URL"):
+#     raise RuntimeError("DATABASE_URL not set")
 
+print(os.getenv("DATABASE_URL"))
 # Connect to PostgreSQL database
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
