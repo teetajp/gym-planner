@@ -24,14 +24,6 @@ app = Flask(__name__)
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 
-# Make sure DATABASE_URL key is set\
-if not os.environ.get("DATABASE_URL"):
-    raise RuntimeError("DATABASE_URL not set")
-
-# Connect to PostgreSQL database
-engine = create_engine(os.getenv("DATABASE_URL"))
-db = scoped_session(sessionmaker(bind=engine))
-
 # Ensure responses aren't cached
 @app.after_request
 def after_request(response):
@@ -39,6 +31,14 @@ def after_request(response):
     response.headers["Expires"] = 0
     response.headers["Pragma"] = "no-cache"
     return response
+    
+# Make sure DATABASE_URL key is set
+if not os.environ.get("DATABASE_URL"):
+    raise RuntimeError("DATABASE_URL not set")
+
+# Connect to PostgreSQL database
+engine = create_engine(os.getenv("DATABASE_URL"))
+db = scoped_session(sessionmaker(bind=engine))
 
 
 # Configure session to use filesystem (instead of signed cookies)
