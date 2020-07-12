@@ -5,7 +5,8 @@ CREATE TABLE IF NOT EXISTS persons (
     username TEXT NOT NULL,
     hash TEXT NOT NULL,
     email citext NOT NULL,
-    is_coach BOOLEAN NOT NULL DEFAULT false
+    is_coach BOOLEAN NOT NULL DEFAULT false,
+    registered_on timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE UNIQUE INDEX ON address ((lower(email)));
+CREATE UNIQUE INDEX ON persons ((lower(email)));

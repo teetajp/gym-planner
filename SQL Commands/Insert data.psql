@@ -1,0 +1,20 @@
+-------------- FAKE DATA TO POPULATE persons TABLE ---------
+INSERT INTO persons (person_id, username, hash, email)
+    VALUES (DEFAULT, 'johndoe', '123812381728', 'johndoe@gmail.com');
+
+INSERT INTO persons (person_id, username, hash, email)
+    VALUES (DEFAULT, 'maryjane', '6420', 'maryjane@gmail.com');
+
+INSERT INTO persons (person_id, username, hash, email, is_coach)
+    VALUES (DEFAULT, 'harrypotter123', 'potterburger', 'harrypotter@gmail.com', true);
+
+
+-------------- FOR TESTING PURPOSES -------------------
+INSERT INTO persons (person_id, username, hash, email, is_coach)
+    VALUES (4, 'elliejane', 'ej123', 'ejane123@gmail.com', true);
+
+INSERT INTO persons (person_id, username, hash, email, is_coach)
+    VALUES (4, 'michaeljacksonian', '5123', 'mjackson1@gmail.com', true);
+
+INSERT INTO persons (person_id, username, hash, email, is_coach)
+    VALUES (DEFAULT, 'jordanpeterson1', 'abcdefg', 'jpeterson', true);
