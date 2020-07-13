@@ -187,16 +187,19 @@ def change_password():
             return apology("New password does not match password confirmation", 400)
 
         # Query username table for hashed password
-        hash_query = db.execute("SELECT hash FROM users WHERE id = ?", session["user_id"])[0]
-
+        results = db.execute("SELECT hash FROM users WHERE user_id = :user_id",
+            {"user_id": session["user_id"]}).fetchall()
+        
         # Ensure submitted current_password hash matches the password in the database
-        if not check_password_hash(hash_query["hash"], request.form.get("current_pw")):
+        if not check_password_hash(results[0][0], request.form.get("current_pw")):
             return apology("Submitted password is incorrect", 400)
 
         else:
             # Update hashed password in the database to the new one
-            db.execute("UPDATE users SET hash = :hash WHERE id = :user_id",
-                        hash=generate_password_hash(request.form.get("new_pw")), user_id=session["user_id"])
+            db.execute("UPDATE users SET hash = :hash WHERE user_id = :user_id",
+                        {"hash": generate_password_hash(request.form.get("new_pw")),
+                        "user_id": session["user_id"]})
+            db.commit()
 
         # Redirect user to home page
         flash("Password changed succesfully!")
