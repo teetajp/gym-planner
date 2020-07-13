@@ -164,12 +164,47 @@ def register():
         return render_template("register.html")
 
 
-@app.route("/change_pw", methods=["GET", "POST"])
+@app.route("/password", methods=["GET", "POST"])
 @login_required
-def change_pw():
+def change_password():
     """Allow user to change password"""
 
-    return "TODO"
+    # User reached route via POST (as by submitting a form via POST)
+    if request.method == "POST":
+
+        # Ensure user submitted all fields
+        if not request.form.get("current_pw"):
+            return apology("Missing current password", 400)
+
+        elif not request.form.get("new_pw"):
+            return apology("Missing new password", 400)
+
+        elif not request.form.get("confirm_pw"):
+            return apology("Missing password confirmation", 400)
+
+        # Ensure new password matches the password confirmation
+        elif (request.form.get("new_pw") != request.form.get("confirm_pw")):
+            return apology("New password does not match password confirmation", 400)
+
+        # Query username table for hashed password
+        hash_query = db.execute("SELECT hash FROM users WHERE id = ?", session["user_id"])[0]
+
+        # Ensure submitted current_password hash matches the password in the database
+        if not check_password_hash(hash_query["hash"], request.form.get("current_pw")):
+            return apology("Submitted password is incorrect", 400)
+
+        else:
+            # Update hashed password in the database to the new one
+            db.execute("UPDATE users SET hash = :hash WHERE id = :user_id",
+                        hash=generate_password_hash(request.form.get("new_pw")), user_id=session["user_id"])
+
+        # Redirect user to home page
+        flash("Password changed succesfully!")
+        return redirect("/")
+
+    # User reached route via GET (as by clicking a link or via redirect)
+    else:
+        return render_template("changepw.html")
 
 
 @app.route("/favicon.ico")
