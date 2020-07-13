@@ -89,6 +89,7 @@ def login():
 
         # Remember which user has logged in
         session["user_id"] = user_id
+        session["username"] = request.form.get("username")
         print("User with user_id: " + str(session["user_id"]) +" has logged in.")
 
         # Redirect user to home page
@@ -105,12 +106,12 @@ def logout():
     """Log user out"""
 
     print("User with user_id: " + str(session["user_id"]) + " has logged out.")
+
     # Forget any user_id
     session.clear()
-
-    flash("Logout Successful.")
+    
     # Redirect user to login form
-    return redirect("/")
+    return redirect("/login")
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -149,9 +150,10 @@ def register():
         print(f"Added user with username: " + request.form.get("username") +
         " and email: " + request.form.get("email"))
 
-        # Log registered user in and remember the id
+        # Log registered user in and remember the user_id and username
         session["user_id"] = db.execute("SELECT user_id FROM users WHERE username = :username",
                           {"username": request.form.get("username")}).fetchall()[0]
+        session["username"] = request.form.get("username")
 
         print("User with user_id: " + str(session["user_id"]) + " has logged in.")
 
