@@ -1,3 +1,6 @@
+DROP DATABASE gymplannerdb;
+CREATE DATABASE gymplannerdb;
+
 CREATE EXTENSION citext;
 
 CREATE TABLE IF NOT EXISTS users (

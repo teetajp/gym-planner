@@ -1,6 +1,10 @@
+-- Use this latest script to make the DB
+DROP DATABASE IF EXISTS gymplannerdb;
+CREATE DATABASE gymplannerdb;
+\c gymplannerdb;
 CREATE EXTENSION citext;
 
-CREATE TABLE IF NOT EXISTS users (
+CREATE TABLE users (
     user_id serial PRIMARY KEY,
     username TEXT NOT NULL,
     hash TEXT NOT NULL,
@@ -10,9 +14,15 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE UNIQUE INDEX ON users ((lower(email)));
 
-CREATE TABLE IF NOT EXISTS coach_users (
+CREATE TABLE coaches (
+    coach_id serial PRIMARY KEY,
+    user_id INTEGER UNIQUE NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users (user_id)
+);
+
+CREATE TABLE coach_users (
     coach_id INTEGER NOT NULL,
     user_id INTEGER NOT NULL,
-    FOREIGN KEY (coach_id) REFERENCES users (user_id),
+    FOREIGN KEY (coach_id) REFERENCES coaches (coach_id),
     FOREIGN KEY (user_id) REFERENCES users (user_id)
 );
