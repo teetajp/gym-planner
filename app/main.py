@@ -204,7 +204,7 @@ def change_password():
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:
-        return render_template("changepw.html")
+        return render_template("password.html")
 
 
 @app.route("/favicon.ico")
