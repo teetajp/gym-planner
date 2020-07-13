@@ -108,6 +108,7 @@ def logout():
     # Forget any user_id
     session.clear()
 
+    flash("Logout Successful.")
     # Redirect user to login form
     return redirect("/")
 
