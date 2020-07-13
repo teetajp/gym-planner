@@ -20,11 +20,12 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from helpers import apology, login_required
 
 app = Flask(__name__)
-
 app.secret_key = os.getenv("SECRET_KEY")
 
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
+
+db.init_app(app)
 
 # Ensure responses aren't cached
 @app.after_request
