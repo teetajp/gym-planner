@@ -25,8 +25,6 @@ app.secret_key = os.getenv("SECRET_KEY")
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 
-db.init_app(main)
-
 # Ensure responses aren't cached
 @app.after_request
 def after_request(response):
@@ -43,6 +41,7 @@ if not os.environ.get("DATABASE_URL"):
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
+db.init_app(app)
 
 # Configure session to use filesystem (instead of signed cookies)
 app.config["SESSION_FILE_DIR"] = mkdtemp()
