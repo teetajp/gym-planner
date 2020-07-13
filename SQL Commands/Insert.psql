@@ -1,0 +1,56 @@
+-------------- RESET EXISTING TABLES -----------------------
+DELETE FROM coach_users;
+DELETE FROM coaches;
+DELETE FROM users;
+ALTER SEQUENCE users_user_id_seq RESTART;
+ALTER SEQUENCE coaches_coach_id_seq RESTART;
+
+-------------- FAKE DATA TO POPULATE persons TABLE ---------
+INSERT INTO users (username, hash, email)
+    VALUES ('johndoe', '123812381728', 'johndoe@gmail.com');
+
+INSERT INTO users (username, hash, email)
+    VALUES ('maryjane', '1234qwer', 'mjane123@gmail.com');
+
+INSERT INTO users (username, hash, email)
+    VALUES ('drewbarrymore', 'covid20', 'dbarrym@gmail.com');
+
+INSERT INTO users (username, hash, email)
+    VALUES ('harrypotter', 'potterjames', 'hpotter@gmail.com');
+
+INSERT INTO users (username, hash, email)
+    VALUES ('charityburbage', 'iloveharry', 'cburbage@gmail.com'); 
+
+INSERT INTO users (username, hash, email)
+    VALUES ('HermioneGranger', 'iloveharry2', 'hgranger@yahoo.com');
+
+INSERT INTO coaches (user_id) VALUES (
+    (SELECT user_id FROM users WHERE username = 'charityburbage'));
+
+INSERT INTO coaches (user_id) VALUES (
+    (SELECT user_id FROM users WHERE username = 'johndoe'));
+
+INSERT INTO coach_users (coach_id, user_id)
+    VALUES ((SELECT coach_id FROM coaches JOIN users
+            ON coaches.user_id = users.user_id WHERE username = 'charityburbage'),
+            (SELECT user_id FROM users WHERE username = 'harrypotter'));
+
+INSERT INTO coach_users (coach_id, user_id)
+    VALUES ((SELECT coach_id FROM coaches JOIN users
+            ON coaches.user_id = users.user_id WHERE username = 'charityburbage'),
+            (SELECT user_id FROM users WHERE username = 'HermioneGranger'));
+
+INSERT INTO coach_users (coach_id, user_id)
+    VALUES ((SELECT coach_id FROM coaches JOIN users
+            ON coaches.user_id = users.user_id WHERE username = 'johndoe'),
+            (SELECT user_id FROM users WHERE username = 'harrypotter'));
+
+------ TEMPLATE FOR EXISITNG USER ---------
+
+INSERT INTO coaches (user_id) VALUES (
+    (SELECT user_id FROM users WHERE username = 'coachname'));
+
+INSERT INTO coach_users (coach_id, user_id)
+    VALUES ((SELECT coach_id FROM coaches JOIN users
+            ON coaches.user_id = users.user_id WHERE username = 'coachname'),
+            (SELECT user_id FROM users WHERE username = 'clientname'));

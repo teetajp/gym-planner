@@ -1,0 +1,31 @@
+------------- SELECT QUERIES ---------------
+SELECT * FROM users;
+
+SELECT * FROM coaches;
+
+SELECT * FROM coach_users;
+
+-- Select username of all users whose coach is charityburbage
+SELECT username FROM users JOIN coach_users
+    ON coach_users.user_id = users.user_id WHERE coach_id = (
+        SELECT coach_id FROM coaches JOIN users
+            ON coaches.user_id = users.user_id WHERE username = 'charityburbage'
+    );
+
+-- Select username of all users whose coach is charityburbage and display coach name alongside
+SELECT username AS clients, 'charityburgbage' AS coachname FROM users JOIN coach_users
+    ON coach_users.user_id = users.user_id WHERE coach_id = (
+        SELECT coach_id FROM coaches JOIN users
+            ON coaches.user_id = users.user_id WHERE username = 'charityburbage'
+    );
+ 
+ -- Select username of all users who has coaches and display coach name alongside
+SELECT (SELECT username FROM users JOIN coaches ON users.user_id=coaches.user_id
+    WHERE coaches.coach_id = coach_users.coach_id) AS coach,
+    (SELECT username FROM users WHERE users.user_id = coach_users.user_id) AS client
+    FROM coach_users;
+
+-- Select username of coaches who has a user with an id of 11 as his/her client
+
+SELECT username, email FROM users JOIN coaches ON users.user_id = coaches.user_id
+JOIN coach_users ON coach_users.coach_id = coaches.coach_id WHERE coach_users.user_id = 11;
