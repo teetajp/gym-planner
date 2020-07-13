@@ -75,7 +75,40 @@ def logout():
 def register():
     """Allow coaches and users to register an account"""
 
-    return render_template("register.html")
+    # User reached route via POST (as by submitting a form via POST)
+    if request.method == "POST":
+
+        # Ensure username was submitted
+        if not request.form.get("username"):
+            return apology("must provide username", 403)
+
+        # Ensure username does not already exist
+        elif len(db.execute("SELECT * FROM users WHERE username = :username",
+                          {"username": request.form.get("username")})) != 0:
+            return apology("username already exists", 403)
+
+        # Ensure password was submitted
+        elif not request.form.get("password"):
+            return apology("must provide password", 403)
+
+        # Ensure password and confirmation matches
+        elif request.form.get("password") != request.form.get("confirmation"):
+            return apology("passwords do not match", 403)
+
+
+        # Add filter for 
+        # Insert the new user into users table
+        db.execute("INSERT INTO users (username, hash) VALUES (:username, :hash)",
+            {"username": request.form.get("username"),
+            "hash": generate_password_hash(request.form.get("password"))})
+
+        # Redirect user to home page
+        flash("Registration successful. Please login.")
+        return redirect("/")
+
+    # User reached route via GET (as by clicking a link or via redirect)
+    else:
+        return render_template("register.html")
 
 
 @app.route("/change_pw", methods=["GET", "POST"])

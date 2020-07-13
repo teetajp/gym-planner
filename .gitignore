@@ -4,3 +4,4 @@ __pycache__/
 cs50template/
 dbkey.txt
 .env
+.pylintrc
