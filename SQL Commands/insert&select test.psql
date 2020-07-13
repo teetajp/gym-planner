@@ -1,0 +1,62 @@
+-------------- FAKE DATA TO POPULATE persons TABLE ---------
+INSERT INTO users (username, hash, email)
+    VALUES ('johndoe', '123812381728', 'johndoe@gmail.com');
+
+INSERT INTO users (username, hash, email)
+    VALUES ('maryjane', '1234qwer', 'mjane123@gmail.com');
+
+INSERT INTO users (username, hash, email)
+    VALUES ('drewbarrymore', 'covid20', 'dbarrym@gmail.com');
+
+INSERT INTO users (username, hash, email)
+    VALUES ('harrypotter', 'potterjames', 'hpotter@gmail.com');
+
+INSERT INTO users (username, hash, email)
+    VALUES ('charityburbage', 'iloveharry', 'cburbage@gmail.com'); 
+
+INSERT INTO users (username, hash, email)
+    VALUES ('HermioneGranger', 'iloveharry2', 'hgranger@yahoo.com');
+
+INSERT INTO coaches (user_id) VALUES (
+    (SELECT user_id FROM users WHERE username = 'charityburbage'));
+
+INSERT INTO coaches (user_id) VALUES (
+    (SELECT user_id FROM users WHERE username = 'johndoe'));
+
+INSERT INTO coach_users (coach_id, user_id)
+    VALUES ((SELECT coach_id FROM coaches JOIN users
+            ON coaches.user_id = users.user_id WHERE username = 'charityburbage'),
+            (SELECT user_id FROM users WHERE username = 'harrypotter'));
+
+INSERT INTO coach_users (coach_id, user_id)
+    VALUES ((SELECT coach_id FROM coaches JOIN users
+            ON coaches.user_id = users.user_id WHERE username = 'charityburbage'),
+            (SELECT user_id FROM users WHERE username = 'HermioneGranger'));
+
+
+------------- SELECT QUERIES ---------------
+SELECT * FROM users;
+
+SELECT * FROM coaches;
+
+SELECT * FROM coach_users;
+
+-- Select username of all users whose coach is charityburbage
+SELECT username FROM users JOIN coach_users
+    ON coach_users.user_id = users.user_id WHERE coach_id = (
+        SELECT coach_id FROM coaches JOIN users
+            ON coaches.user_id = users.user_id WHERE username = 'charityburbage'
+    );
+
+-- Select username of all users whose coach is charityburbage and display coach name alongside
+SELECT username AS clients, 'charityburgbage' AS coachname FROM users JOIN coach_users
+    ON coach_users.user_id = users.user_id WHERE coach_id = (
+        SELECT coach_id FROM coaches JOIN users
+            ON coaches.user_id = users.user_id WHERE username = 'charityburbage'
+    );
+ 
+ -- Select username of all users who has coaches and display coach name alongside
+SELECT (SELECT username FROM users JOIN coaches ON users.user_id=coaches.user_id
+    WHERE coaches.coach_id = coach_users.coach_id) AS coach,
+    (SELECT username FROM users WHERE users.user_id = coach_users.user_id) AS client
+    FROM coach_users;

@@ -1,0 +1,18 @@
+CREATE EXTENSION citext;
+
+CREATE TABLE IF NOT EXISTS users (
+    user_id serial PRIMARY KEY,
+    username TEXT NOT NULL,
+    hash TEXT NOT NULL,
+    email citext NOT NULL,
+    date_joined DATE NOT NULL DEFAULT CURRENT_DATE
+);
+
+CREATE UNIQUE INDEX ON users ((lower(email)));
+
+CREATE TABLE IF NOT EXISTS coach_users (
+    coach_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    FOREIGN KEY (coach_id) REFERENCES users (user_id),
+    FOREIGN KEY (user_id) REFERENCES users (user_id)
+);
