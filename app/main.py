@@ -25,7 +25,7 @@ app.secret_key = os.getenv("SECRET_KEY")
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 
-db.init_app(app)
+db.init_app(main)
 
 # Ensure responses aren't cached
 @app.after_request
