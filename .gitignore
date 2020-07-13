@@ -1,7 +1,8 @@
 venv/
 __pycache__/
 .vscode/
-runserver.ps1
 cs50template/
+private/
 dbkey.txt
 .env
+.pylintrc
