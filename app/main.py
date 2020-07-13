@@ -211,6 +211,29 @@ def change_password():
     else:
         return render_template("password.html")
 
+@app.route("/invite_coach", methods=["GET", "POST"])
+@login_required
+def invite_coach():
+    """Allow user to invite coaches"""
+
+    # User reached route via POST (as by submitting a form via POST)
+    if request.method == "POST":
+
+        # Redirect user to home page
+        return redirect("/")
+
+    # User reached route via GET (as by clicking a link or via redirect)
+    else:
+
+        # Look up all coaches that the user invited and return it to the user
+        coaches = db.execute("SELECT username, email FROM users JOIN coaches ON users.user_id = coaches.user_id \
+            JOIN coach_users ON coach_users.coach_id = coaches.coach_id WHERE coach_users.user_id = :user_id",
+            {"user_id": session["user_id"]}).fetchall()
+
+        for coach in coaches:
+            print(coach[0])
+            print(coach[1])
+        return render_template("invite_coach.html", coaches=coaches)
 
 @app.route("/favicon.ico")
 def favicon():
@@ -236,3 +259,19 @@ for code in default_exceptions:
 if __name__ == "__main__":
     app.run()
 
+
+# Template for Adding Page
+# @app.route("/<ADD PAGE NAME>", methods=["GET", "POST"])
+# @login_required
+# def <FUNCTION_NAME>():
+#     """Allow user to change password"""
+
+#     # User reached route via POST (as by submitting a form via POST)
+#     if request.method == "POST":
+
+#         # Redirect user to home page
+#         return redirect("/")
+
+#     # User reached route via GET (as by clicking a link or via redirect)
+#     else:
+#         return render_template("<TEMPLATE NAME>.html")

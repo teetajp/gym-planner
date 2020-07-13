@@ -40,6 +40,21 @@ INSERT INTO coach_users (coach_id, user_id)
             ON coaches.user_id = users.user_id WHERE username = 'charityburbage'),
             (SELECT user_id FROM users WHERE username = 'HermioneGranger'));
 
+INSERT INTO coach_users (coach_id, user_id)
+    VALUES ((SELECT coach_id FROM coaches JOIN users
+            ON coaches.user_id = users.user_id WHERE username = 'johndoe'),
+            (SELECT user_id FROM users WHERE username = 'harrypotter'));
+
+------ TEMPLATE FOR EXISITNG USER ---------
+
+INSERT INTO coaches (user_id) VALUES (
+    (SELECT user_id FROM users WHERE username = 'coachname'));
+
+INSERT INTO coach_users (coach_id, user_id)
+    VALUES ((SELECT coach_id FROM coaches JOIN users
+            ON coaches.user_id = users.user_id WHERE username = 'coachname'),
+            (SELECT user_id FROM users WHERE username = 'clientname'));
+
 
 ------------- SELECT QUERIES ---------------
 SELECT * FROM users;
@@ -67,3 +82,8 @@ SELECT (SELECT username FROM users JOIN coaches ON users.user_id=coaches.user_id
     WHERE coaches.coach_id = coach_users.coach_id) AS coach,
     (SELECT username FROM users WHERE users.user_id = coach_users.user_id) AS client
     FROM coach_users;
+
+-- Select username of coaches who has a user with an id of 11 as his/her client
+
+SELECT username, email FROM users JOIN coaches ON users.user_id = coaches.user_id
+JOIN coach_users ON coach_users.coach_id = coaches.coach_id WHERE coach_users.user_id = 11;
