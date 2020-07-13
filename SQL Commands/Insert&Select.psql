@@ -1,3 +1,10 @@
+-------------- RESET EXISTING TABLES -----------------------
+DELETE FROM coach_users;
+DELETE FROM coaches;
+DELETE FROM users;
+ALTER SEQUENCE users_user_id_seq RESTART;
+ALTER SEQUENCE coaches_coach_id_seq RESTART;
+
 -------------- FAKE DATA TO POPULATE persons TABLE ---------
 INSERT INTO users (username, hash, email)
     VALUES ('johndoe', '123812381728', 'johndoe@gmail.com');
