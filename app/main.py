@@ -49,6 +49,7 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
+# TODO: SANITIZE ALL user inputs
 
 @app.route("/")
 @login_required
@@ -129,6 +130,11 @@ def register():
         elif len(db.execute("SELECT user_id FROM users WHERE username = :username",
                           {"username": request.form.get("username")}).fetchall()) != 0:
             return apology("username already exists", 403)
+
+        # Ensure username does not already exist
+        elif len(db.execute("SELECT user_id FROM users WHERE username = :username",
+                        {"username": request.form.get("email")}).fetchall()) != 0:
+            return apology("email already exists", 403)
 
         # Ensure password was submitted
         elif not request.form.get("password"):
@@ -218,6 +224,27 @@ def invite_coach():
 
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
+        
+        # TODO: Check to see if invited coach has a coach_id already;
+        # if not, create one.
+        if not request.form.get("coach_email"):
+            return apology("Need coach email address", 400)
+
+        # Look up all coaches that the user invited
+        coaches = db.execute("SELECT username, email FROM users JOIN coaches ON users.user_id = coaches.user_id \
+            JOIN coach_users ON coach_users.coach_id = coaches.coach_id WHERE coach_users.user_id = :user_id",
+            {"user_id": session["user_id"]}).fetchall()
+
+        # Let user invite coach even if coach has not created account using email, but alert them
+
+        # Ask user if coach's username is correct
+
+        # What happens if insert into table with already existing data?
+
+        # TODO: INSERT INTO coach_users
+
+        # TODO: remove coach with red 'remove button'
+        # Use JS? or do we have to use Flask?
 
         # Redirect user to home page
         return redirect("/")
