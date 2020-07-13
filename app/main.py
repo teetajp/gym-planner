@@ -87,6 +87,7 @@ def login():
 
         # Remember which user has logged in
         session["user_id"] = user_id
+        print("User with user_id: " + session["user_id"] +" has logged in.")
 
         # Redirect user to home page
         flash("Login successful!")
@@ -101,6 +102,7 @@ def login():
 def logout():
     """Log user out"""
 
+    print("User with user_id: " + session["user_id"] + " has logged out.")
     # Forget any user_id
     session.clear()
 
@@ -139,13 +141,16 @@ def register():
             {"username": request.form.get("username"),
             "hash": generate_password_hash(request.form.get("password")),
             "email": request.form.get("email")})
+        db.commit()
+
         print(f"Added user with username: " + request.form.get("username") +
         " and email: " + request.form.get("email"))
-        db.commit()
 
         # Log registered user in and remember the id
         session["user_id"] = db.execute("SELECT user_id FROM users WHERE username = :username",
                           {"username": request.form.get("username")}).fetchall()[0]
+
+        print("User with user_id: " + session["user_id"] + " has logged in.")
 
         # Redirect user to home page
         flash("Registration successful. Automatically logged in.")
