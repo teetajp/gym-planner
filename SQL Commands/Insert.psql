@@ -54,3 +54,7 @@ INSERT INTO coach_users (coach_id, user_id)
     VALUES ((SELECT coach_id FROM coaches JOIN users
             ON coaches.user_id = users.user_id WHERE username = 'coachname'),
             (SELECT user_id FROM users WHERE username = 'clientname'));
+
+INSERT INTO coach_users (coach_id, user_id)
+    VALUES ((SELECT coach_id FROM coaches JOIN users
+            ON coaches.user_id = users.user_id WHERE email = 'coachemail'), 'userid');

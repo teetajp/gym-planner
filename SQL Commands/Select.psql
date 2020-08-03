@@ -29,3 +29,9 @@ SELECT (SELECT username FROM users JOIN coaches ON users.user_id=coaches.user_id
 
 SELECT username, email FROM users JOIN coaches ON users.user_id = coaches.user_id
 JOIN coach_users ON coach_users.coach_id = coaches.coach_id WHERE coach_users.user_id = 11;
+
+-- Select username and email of coach with an email of 'coachemail' who has a user with user_id of 11 as his/herclient
+
+SELECT username, email FROM users JOIN coaches ON users.user_id = coaches.user_id
+JOIN coach_users ON coach_users.coach_id = coaches.coach_id WHERE coach_users.user_id = 4 AND email = 'johndoe@gmail.com';
+
