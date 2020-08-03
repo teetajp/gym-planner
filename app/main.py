@@ -228,24 +228,39 @@ def invite_coach():
         if not request.form.get("coach_email"):
             return apology("Need coach email address", 400)
 
-        # Look up all coaches that the user invited
+        # Check if coach has already been invited
+        check_coaches = db.execute("SELECT username, email FROM users JOIN coaches \
+            ON users.user_id = coaches.user_id JOIN coach_users ON coach_users.coach_id = coaches.coach_id \
+                WHERE coach_users.user_id = :user_id AND email = :coach_email",
+                {"coach_email": request.form.get("coach_email"), "user_id": session["user_id"]}).fetchall()
+        
+        print(check_coaches)
+        if len(check_coaches) != 0:
+            return apology("Coach already invited", 400)
+        
+        # TODO: !!! Create a coach_id when the user invites the coach if the coach does not have an coach_id
+
+        # TODO: !!! Disallow users from inviting coach if coach has not registered. (Invalid coach email)
+        # TODO: Later - Let user invite coach even if coach has not created account using email, but alert them
+        # TODO: ! Ask user to confirm if coach's username is correct 
+
+        # INSERT INTO coach_users
+        db.execute("INSERT INTO coach_users (coach_id, user_id) \
+            VALUES ((SELECT coach_id FROM coaches JOIN users \
+                ON coaches.user_id = users.user_id WHERE email = :coach_email), :user_id)",
+                {"coach_email": request.form.get("coach_email"), "user_id": session["user_id"]})
+        
+        db.commit()  # Commit changes
+
         coaches = db.execute("SELECT username, email FROM users JOIN coaches ON users.user_id = coaches.user_id \
             JOIN coach_users ON coach_users.coach_id = coaches.coach_id WHERE coach_users.user_id = :user_id",
             {"user_id": session["user_id"]}).fetchall()
-
-        # Let user invite coach even if coach has not created account using email, but alert them
-
-        # Ask user if coach's username is correct
-
-        # What happens if insert into table with already existing data?
-
-        # TODO: INSERT INTO coach_users
 
         # TODO: remove coach with red 'remove button'
         # Use JS? or do we have to use Flask?
 
         # Redirect user to home page
-        return redirect("/")
+        return render_template("invite_coach.html", coaches=coaches)
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:

@@ -28,7 +28,11 @@ Invite Coach
         <tbody>
             {% for coach in coaches %}
             <tr>
+                {% if coach[0] is none %}
+                <td>Not Registered Yet</td>
+                {% else %}
                 <td>{{ coach[0] }}</td>
+                {% endif %}
                 <td>{{ coach[1] }}</td>
                 <td>
                     <button type="button" class="btn btn-danger">Remove</button>
