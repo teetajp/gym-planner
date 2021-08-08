@@ -13,16 +13,3 @@ CREATE TABLE users (
 );
 
 CREATE UNIQUE INDEX ON users ((lower(email)));
-
-CREATE TABLE coaches (
-    coach_id serial PRIMARY KEY,
-    user_id INTEGER UNIQUE NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users (user_id)
-);
-
-CREATE TABLE coach_users (
-    coach_id INTEGER NOT NULL,
-    user_id INTEGER NOT NULL,
-    FOREIGN KEY (coach_id) REFERENCES coaches (coach_id),
-    FOREIGN KEY (user_id) REFERENCES users (user_id)
-);

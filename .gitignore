@@ -3,6 +3,8 @@ __pycache__/
 .vscode/
 cs50template/
 private/
-dbkey.txt
+private/dbkey.txt
+private/notes.txt
+runserver.ps1
 .env
 .pylintrc
