@@ -6,10 +6,11 @@ CREATE EXTENSION citext;
 
 CREATE TABLE users (
     user_id serial PRIMARY KEY,
-    username TEXT NOT NULL,
+    username citext NOT NULL,
     hash TEXT NOT NULL,
     email citext NOT NULL,
     date_joined DATE NOT NULL DEFAULT CURRENT_DATE
 );
 
-CREATE UNIQUE INDEX ON users ((lower(email)));
+CREATE UNIQUE INDEX ON users (email);
+CREATE UNIQUE INDEX ON users (username);

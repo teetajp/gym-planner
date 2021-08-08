@@ -24,6 +24,7 @@ app = Flask(__name__)
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 
+
 # Ensure responses aren't cached
 @app.after_request
 def after_request(response):
@@ -31,7 +32,8 @@ def after_request(response):
     response.headers["Expires"] = 0
     response.headers["Pragma"] = "no-cache"
     return response
-    
+
+
 # Make sure DATABASE_URL key is set
 if not os.environ.get("DATABASE_URL"):
     raise RuntimeError("DATABASE_URL not set")
@@ -39,7 +41,6 @@ if not os.environ.get("DATABASE_URL"):
 # Connect to PostgreSQL database
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
-
 
 # Configure session to use filesystem (instead of signed cookies)
 app.config["SESSION_FILE_DIR"] = mkdtemp()
@@ -73,20 +74,17 @@ def login():
             return apology("must provide password", 403)
 
         # Query database for username
-        users = db.execute("SELECT user_id, hash FROM users WHERE username = :username",
-                          {"username": request.form.get("username")}).fetchall()
+        users = db.execute("SELECT hash FROM users WHERE username = :username",
+                           {"username": request.form.get("username")}).fetchall()
 
-        # Ensure username exists
-        if len(users) != 1:
+
+        # Ensure user exists and submitted password matches password in database
+        if not len(users) == 1 and check_password_hash(users[0][0], request.form.get("password")):
             return apology("invalid username and/or password", 403)
 
-        # Ensure submitted password matches password in database
-        for user_id, hash in users:
-            if not check_password_hash(hash, request.form.get("password")):
-                return apology("invalid username and/or password", 403)
-
         # Remember which user has logged in
-        session["user_id"] = user_id
+        session["username"] = request.form.get("username")
+
 
         # Redirect user to home page
         flash("Login successful!")
@@ -121,8 +119,17 @@ def register():
 
         # Ensure username does not already exist
         elif len(db.execute("SELECT user_id FROM users WHERE username = :username",
-                          {"username": request.form.get("username")}).fetchall()) != 0:
+                            {"username": request.form.get("username")}).fetchall()) != 0:
             return apology("username already exists", 403)
+
+        # Ensure email was submitted
+        if not request.form.get("email"):
+            return apology("must provide email", 403)
+
+        # Ensure email does not already exist
+        elif len(db.execute("SELECT user_id FROM users WHERE email = :email",
+                            {"email": request.form.get("email")}).fetchall()) != 0:
+            return apology("email already exists", 403)
 
         # Ensure password was submitted
         elif not request.form.get("password"):
@@ -136,16 +143,19 @@ def register():
 
         # Insert the new user into users table
         db.execute("INSERT INTO users (username, hash, email) VALUES (:username, :hash, :email)",
-            {"username": request.form.get("username"),
-            "hash": generate_password_hash(request.form.get("password")),
-            "email": request.form.get("email")})
+                   {"username": request.form.get("username"),
+                    "hash": generate_password_hash(request.form.get("password")),
+                    "email": request.form.get("email")})
         print(f"Added user with username: " + request.form.get("username") +
-        " and email: " + request.form.get("email"))
+              " and email: " + request.form.get("email"))
         db.commit()
 
         # Log registered user in and remember the id
-        session["user_id"] = db.execute("SELECT user_id FROM users WHERE username = :username",
-                          {"username": request.form.get("username")}).fetchall()[0]
+        session["username"] = request.form.get("username")
+
+        # Previously remember session by user_id
+        # session["user_id"] = db.execute("SELECT user_id FROM users WHERE username = :username",
+        #                                 {"username": request.form.get("username")}).fetchall()[0]
 
         # Redirect user to home page
         flash("Registration successful. Automatically logged in.")
@@ -187,4 +197,3 @@ for code in default_exceptions:
 
 if __name__ == "__main__":
     app.run()
-
