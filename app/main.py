@@ -1,20 +1,22 @@
+"""
+Runs the Flask server
+"""
 import os
 from flask import (
     Flask,
     flash,
-    jsonify,
     redirect,
     render_template,
     request,
     session,
-    url_for,
     send_from_directory,
 )
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from tempfile import mkdtemp
-from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
+from werkzeug.exceptions import default_exceptions, HTTPException, \
+    InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from helpers import apology, login_required
@@ -73,18 +75,21 @@ def login():
         elif not request.form.get("password"):
             return apology("must provide password", 403)
 
-        # Query database for username
-        users = db.execute("SELECT hash FROM users WHERE username = :username",
-                           {"username": request.form.get("username")}).fetchall()
+        # Query database for user's hashed password
+        hashed_pw = db.execute(
+            "SELECT hash FROM users WHERE username = :username",
+            {"username": request.form.get("username")}).fetchall()
 
-
-        # Ensure user exists and submitted password matches password in database
-        if not len(users) == 1 and check_password_hash(users[0][0], request.form.get("password")):
+        if len(hashed_pw) != 1:
+            return apology("Duplicate users found")
+        elif not check_password_hash(hashed_pw[0][0],
+                                     request.form.get("password")):
             return apology("invalid username and/or password", 403)
+
+        print(len(hashed_pw))
 
         # Remember which user has logged in
         session["username"] = request.form.get("username")
-
 
         # Redirect user to home page
         flash("Login successful!")
@@ -118,8 +123,9 @@ def register():
             return apology("must provide username", 403)
 
         # Ensure username does not already exist
-        elif len(db.execute("SELECT user_id FROM users WHERE username = :username",
-                            {"username": request.form.get("username")}).fetchall()) != 0:
+        elif len(db.execute(
+                "SELECT user_id FROM users WHERE username = :username",
+                {"username": request.form.get("username")}).fetchall()) != 0:
             return apology("username already exists", 403)
 
         # Ensure email was submitted
@@ -128,7 +134,8 @@ def register():
 
         # Ensure email does not already exist
         elif len(db.execute("SELECT user_id FROM users WHERE email = :email",
-                            {"email": request.form.get("email")}).fetchall()) != 0:
+                            {"email": request.form.get(
+                                "email")}).fetchall()) != 0:
             return apology("email already exists", 403)
 
         # Ensure password was submitted
@@ -142,11 +149,13 @@ def register():
         # TODO: Add regex filter to sanitize email inputs
 
         # Insert the new user into users table
-        db.execute("INSERT INTO users (username, hash, email) VALUES (:username, :hash, :email)",
-                   {"username": request.form.get("username"),
-                    "hash": generate_password_hash(request.form.get("password")),
-                    "email": request.form.get("email")})
-        print(f"Added user with username: " + request.form.get("username") +
+        db.execute(
+            "INSERT INTO users (username, hash, email) VALUES (:username, "
+            ":hash, :email)",
+            {"username": request.form.get("username"),
+             "hash": generate_password_hash(request.form.get("password")),
+             "email": request.form.get("email")})
+        print("Added user with username: " + request.form.get("username") +
               " and email: " + request.form.get("email"))
         db.commit()
 
@@ -154,8 +163,10 @@ def register():
         session["username"] = request.form.get("username")
 
         # Previously remember session by user_id
-        # session["user_id"] = db.execute("SELECT user_id FROM users WHERE username = :username",
-        #                                 {"username": request.form.get("username")}).fetchall()[0]
+        # session["user_id"] = db.execute("SELECT user_id FROM users WHERE
+        # username = :username",
+        #                                 {"username": request.form.get(
+        #                                 "username")}).fetchall()[0]
 
         # Redirect user to home page
         flash("Registration successful. Automatically logged in.")
@@ -171,7 +182,54 @@ def register():
 def change_pw():
     """Allow user to change password"""
 
-    return "TODO"
+    # User reached route via POST (as by submitting a form via POST)
+    if request.method == "POST":
+
+        # Ensure current password was submitted
+        if not request.form.get("current_pw"):
+            return apology("must provide current password", 403)
+
+        elif not request.form.get("new_pw"):
+            return apology("must provide new password", 403)
+
+        elif request.form.get("new_pw") != request.form.get("confirm_pw"):
+            # Ensure password and confirmation matches
+            return apology("new password does not match confirmation password",
+                           403)
+
+        elif request.form.get("current_pw") == request.form.get("new_pw"):
+            return apology("new password must not match current password", 403)
+
+        # Query database for the user's hashed password
+        result = db.execute(
+            "SELECT user_id, hash FROM users WHERE username = :username",
+            {"username": session["username"]}).fetchall()
+
+        user_id = result[0][0]
+        hashed_pw = result[0][1]
+        print(user_id)
+        print(hashed_pw)
+
+        # Ensure user exists and submitted password matches password in
+        # database
+        if len(result) != 1:
+            return apology("duplicate users found", 403)
+        elif not check_password_hash(hashed_pw,
+                                     request.form.get("current_pw")):
+            return apology("inputted password must not match current password",
+                           403)
+
+        db.execute("UPDATE users SET hash = :hash WHERE user_id = :user_id",
+                   {"hash": generate_password_hash(request.form.get("new_pw")),
+                    "user_id": user_id})
+        db.commit()
+
+        flash("Password changed successfully.")
+        return redirect("/")
+
+    # User reached route via GET (as by clicking a link or via redirect)
+    else:
+        return render_template("change_pw.html")
 
 
 @app.route("/favicon.ico")
