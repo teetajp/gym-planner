@@ -231,6 +231,10 @@ def change_pw():
     else:
         return render_template("change_pw.html")
 
+@app.route("/plans", methods=["GET", "POST"])
+@login_required
+def workout_plans():
+    return render_template("plans.html")
 
 @app.route("/favicon.ico")
 def favicon():
