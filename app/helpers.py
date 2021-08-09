@@ -27,7 +27,7 @@ def apology(message, code=400):
         return s
 
     return render_template("apology.html", top=code,
-                           botto
+                           bottom
                            =escape(message)), code
 
 

@@ -20,7 +20,6 @@ def get_db():
     return g.db
 
 
-# todo: add app context that triggers this function upon closing app
 def close_db():
     """If this request connected to the database,
     close the connection."""

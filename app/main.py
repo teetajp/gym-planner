@@ -13,6 +13,7 @@ from werkzeug.exceptions import default_exceptions, HTTPException, \
 from helpers import apology, login_required
 import auth
 
+
 app = Flask(__name__)
 
 # Ensure templates are auto-reloaded
@@ -66,7 +67,7 @@ def errorhandler(e):
     """Handle error"""
     if not isinstance(e, HTTPException):
         e = InternalServerError()
-    # return apology(e.name, e.code)
+    print(e)
     return apology(e.name, e.code)
 
 

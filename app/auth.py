@@ -10,7 +10,7 @@ from flask import (
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from helpers import apology, login_required
-from db import get_db
+from db import get_db, close_db
 
 bp = Blueprint("auth", __name__, url_prefix="/auth")
 
@@ -155,6 +155,7 @@ def change_pw():
                    {"hash": generate_password_hash(request.form.get("new_pw")),
                     "user_id": user_id})
         db.commit()
+        close_db()
 
         flash("Password changed successfully.")
         return redirect("/")
