@@ -1,8 +1,7 @@
-# import requests
-# import urllib.parse
-
-from flask import redirect, render_template, request, session
+"""Helper functions from CS50x"""
+from flask import redirect, render_template, session, url_for
 from functools import wraps
+
 
 # Taken from CS50 template
 def apology(message, code=400):
@@ -27,7 +26,9 @@ def apology(message, code=400):
             s = s.replace(old, new)
         return s
 
-    return render_template("apology.html", top=code, bottom=escape(message)), code
+    return render_template("apology.html", top=code,
+                           botto
+                           =escape(message)), code
 
 
 def login_required(f):
@@ -40,12 +41,7 @@ def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if session.get("username") is None:
-            return redirect("/login")
+            return redirect(url_for("auth.login"))
         return f(*args, **kwargs)
 
     return decorated_function
-
-
-def usd(value):
-    """Format value as USD."""
-    return f"${value:,.2f}"

@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block main %}
-    <form action="/change_pw" method="post">
+    <form action="{{ url_for('auth.change_pw') }}" method="post">
         <div class="form-group">
             <input class="form-control" name="current_pw" placeholder="Current Password" type="password">
         </div>

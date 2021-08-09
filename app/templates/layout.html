@@ -30,10 +30,10 @@
             {% if session.username %}
             <ul class="navbar-nav mr-auto mt-2">
                 <li class="nav-item">
-                    <a class="nav-link" href="/exercise_now">Exercise Now</a>
+                    <a class="nav-link" href="/exercise">Exercise Now</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="/plans">Workout Plans</a>
+                  <a class="nav-link" href="{{ url_for('plan_workout') }}">Workout Plans</a>
                 </li>
             </ul>
             <ul class="navbar-nav ml-auto mt-2">
@@ -43,15 +43,15 @@
                     <b>{{ session["username"] }}</b>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                    <a class="dropdown-item" href="/change_pw">Change Password</a>
-                    <a class="dropdown-item" href="/logout">Log Out</a>
+                    <a class="dropdown-item" href="{{url_for('auth.change_pw')}}">Change Password</a>
+                    <a class="dropdown-item" href="{{url_for('auth.logout')}}">Log Out</a>
                 </div>
                 </li>
             </ul>
             {% else %}
             <ul class="navbar-nav ml-auto mt-2">
-                <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
-                <li class="nav-item"><a class="nav-link" href="/login">Log In</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{url_for('auth.register')}}">Register</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{url_for('auth.login')}}">Log In</a></li>
             </ul>
             {% endif %}
         </div>
