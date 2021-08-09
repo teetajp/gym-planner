@@ -1,18 +1,19 @@
 """ Runs the Flask server """
 import os
+from tempfile import mkdtemp
+
 from flask import (
     Flask,
     render_template,
     send_from_directory,
 )
 from flask_session import Session
-from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, \
     InternalServerError
 
-from helpers import apology, login_required
 import auth
-
+import planner
+from helpers import apology, login_required
 
 app = Flask(__name__)
 
@@ -39,6 +40,7 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 
 app.register_blueprint(auth.bp)
+app.register_blueprint(planner.bp)
 Session(app)
 
 
@@ -47,11 +49,6 @@ Session(app)
 def index():
     return render_template("index.html")
 
-
-@app.route("/plans", methods=["GET", "POST"])
-@login_required
-def plan_workout():
-    return render_template("plans.html")
 
 
 @app.route("/favicon.ico")
